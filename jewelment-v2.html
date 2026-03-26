@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jewelment — AI Jewellery Render Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#B8924A;--gold-light:#D4AE72;--gold-pale:#F0E6D0;
+  --ink:#0F0D0A;--ink-soft:#2C2820;--muted:#7A6E62;
+  --cream:#F8F4EE;--cream2:#F2EDE4;--white:#FFFFFF;
+  --border:rgba(184,146,74,0.18);--border-soft:rgba(184,146,74,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;}
+
+/* ─── LANDING ─── */
+#landing{display:flex;flex-direction:column;min-height:100vh;}
+
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 64px;
+  background:rgba(248,244,238,0.94);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border-soft);
+  position:sticky;top:0;z-index:200;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-gem{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);
+}
+.brand-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:var(--ink);}
+.brand-name span{color:var(--gold);font-style:italic;}
+.nav-links{display:flex;align-items:center;gap:32px;}
+.nav-link{font-size:13px;color:var(--muted);text-decoration:none;letter-spacing:0.3px;transition:color .2s;}
+.nav-link:hover{color:var(--gold);}
+.nav-btn{background:var(--ink);color:var(--white);border:none;cursor:pointer;padding:10px 26px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;transition:all .25s;}
+.nav-btn:hover{background:var(--gold);}
+
+.hero{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;padding:100px 40px 80px;
+  position:relative;overflow:hidden;
+}
+.hero-bg{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 55% at 50% 40%,rgba(184,146,74,0.09) 0%,transparent 65%),
+             radial-gradient(circle 200px at 15% 80%,rgba(184,146,74,0.05) 0%,transparent 70%),
+             radial-gradient(circle 150px at 85% 20%,rgba(184,146,74,0.06) 0%,transparent 70%);}
+.gem-d{position:absolute;opacity:0.07;pointer-events:none;}
+.gem-d.g1{top:12%;left:8%;width:48px;height:48px;background:var(--gold);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);animation:fl1 8s ease-in-out infinite;}
+.gem-d.g2{top:20%;right:10%;width:32px;height:32px;background:var(--gold);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);animation:fl2 10s ease-in-out infinite;}
+.gem-d.g3{bottom:18%;left:6%;width:24px;height:24px;background:var(--gold);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);animation:fl1 12s ease-in-out infinite 2s;}
+.gem-d.g4{bottom:25%;right:7%;width:40px;height:40px;background:var(--gold);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);animation:fl2 9s ease-in-out infinite 1s;}
+@keyframes fl1{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(5deg)}}
+@keyframes fl2{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(-6deg)}}
+
+.hero-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:rgba(184,146,74,0.06);padding:6px 18px;border-radius:100px;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:36px;animation:fu .9s ease both;}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(46px,7.5vw,92px);font-weight:400;line-height:1.03;letter-spacing:-1px;color:var(--ink);max-width:820px;animation:fu .9s .1s ease both;}
+.hero h1 em{font-style:italic;color:var(--gold);}
+.hero h1 .l2{display:block;font-weight:700;}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.75;max-width:500px;margin:28px auto 52px;animation:fu .9s .2s ease both;}
+.hero-actions{display:flex;align-items:center;gap:16px;animation:fu .9s .3s ease both;}
+.btn-p{display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:var(--white);border:none;cursor:pointer;padding:16px 38px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;transition:all .3s;}
+.btn-p:hover{background:var(--gold);transform:translateY(-2px);box-shadow:0 16px 48px rgba(184,146,74,0.28);}
+.btn-p svg{transition:transform .3s;}
+.btn-p:hover svg{transform:translateX(4px);}
+.btn-g{font-size:13px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:0.3px;text-decoration:underline;text-underline-offset:4px;transition:color .2s;}
+.btn-g:hover{color:var(--gold);}
+
+.strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--white);}
+.si{padding:36px 28px;text-align:center;border-right:1px solid var(--border);}
+.si:last-child{border-right:none;}
+.sn{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:6px;}
+.sl{font-size:12px;color:var(--muted);letter-spacing:0.5px;}
+
+.how{padding:96px 64px;}
+.ey{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:14px;}
+.st{font-family:'Playfair Display',serif;font-size:38px;font-weight:400;color:var(--ink);margin-bottom:56px;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;}
+.step-n{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:var(--gold-pale);line-height:1;margin-bottom:16px;}
+.step-n::after{content:'';display:block;width:32px;height:2px;background:var(--gold);margin-top:8px;}
+.step h3{font-size:15px;font-weight:500;margin-bottom:8px;}
+.step p{font-size:13px;color:var(--muted);line-height:1.65;}
+
+.showcase{padding:0 64px 96px;}
+.vg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:0;}
+.vc{background:var(--white);border:1px solid var(--border-soft);overflow:hidden;transition:transform .3s,box-shadow .3s;}
+.vc:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(184,146,74,0.12);}
+.vt{background:linear-gradient(145deg,#f5efe4,#ede5d6);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;}
+.vt::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 40%,rgba(255,255,255,0.4) 0%,transparent 60%);}
+.vb{padding:14px 16px;}
+.vl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.vd{font-size:12px;color:var(--ink-soft);}
+
+footer{background:var(--ink);color:rgba(255,255,255,0.5);padding:40px 64px;display:flex;align-items:center;justify-content:space-between;}
+.fb{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);}
+.fb span{color:var(--gold);font-style:italic;}
+.fc{font-size:12px;}
+
+/* ─── STUDIO ─── */
+#studio{display:none;min-height:100vh;flex-direction:column;}
+#studio.active{display:flex;}
+
+.snav{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:var(--white);border-bottom:1px solid var(--border-soft);position:sticky;top:0;z-index:200;}
+.sbrand{font-family:'Playfair Display',serif;font-size:19px;font-weight:500;color:var(--ink);}
+.sbrand span{color:var(--gold);font-style:italic;}
+.back-btn{display:flex;align-items:center;gap:8px;background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;padding:8px 18px;font-family:'Outfit',sans-serif;font-size:12px;letter-spacing:0.5px;transition:all .2s;}
+.back-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.studio-wrap{display:grid;grid-template-columns:360px 1fr;flex:1;min-height:calc(100vh - 61px);}
+
+.sidebar{background:var(--white);border-right:1px solid var(--border-soft);padding:28px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:24px;}
+.sec{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.sec-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;}
+
+.uzone{border:1.5px dashed rgba(184,146,74,0.35);background:rgba(184,146,74,0.03);padding:28px 16px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.uzone:hover{border-color:var(--gold);background:rgba(184,146,74,0.07);}
+.uzone.filled{border-style:solid;border-color:var(--gold);padding:10px;}
+.uzone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.ui{font-size:28px;margin-bottom:10px;}
+.uh{font-size:12px;color:var(--muted);line-height:1.5;}
+.uh b{color:var(--ink);display:block;font-size:13px;margin-bottom:3px;font-weight:500;}
+#pi{width:100%;display:none;}
+
+.fg{display:flex;flex-direction:column;gap:7px;}
+.fl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
+.fs{width:100%;padding:10px 13px;border:1px solid var(--border);background:var(--cream);font-family:'Outfit',sans-serif;font-size:14px;color:var(--ink);appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23B8924A' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;transition:border-color .2s;}
+.fs:focus{outline:none;border-color:var(--gold);}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{padding:6px 14px;border:1px solid var(--border);background:var(--cream);font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s;border-radius:100px;}
+.chip.on{background:var(--gold);border-color:var(--gold);color:var(--white);}
+
+/* Model selector */
+.model-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mtab{border:1px solid var(--border);background:var(--cream);padding:11px 10px;cursor:pointer;text-align:center;transition:all .2s;position:relative;}
+.mtab.on{border-color:var(--gold);background:rgba(184,146,74,0.07);}
+.mt-badge{position:absolute;top:-1px;right:-1px;background:var(--gold);color:var(--white);font-size:9px;padding:2px 7px;letter-spacing:0.5px;font-weight:500;}
+.mt-badge.dark{background:var(--ink);}
+.mt-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;}
+.mt-sub{font-size:10px;color:var(--muted);}
+.mtab.on .mt-name{color:var(--gold);}
+
+.gbtn{width:100%;padding:15px;background:var(--ink);color:var(--white);border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.gbtn:hover:not(:disabled){background:var(--gold);}
+.gbtn:disabled{opacity:.45;cursor:not-allowed;}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .8s linear infinite;display:none;}
+@keyframes rot{to{transform:rotate(360deg)}}
+.err{background:#fff5f5;border:1px solid #f5c6c6;padding:10px 14px;font-size:12px;color:#b00;display:none;line-height:1.5;}
+.err.on{display:block;}
+
+/* Canvas */
+.canvas{background:var(--cream2);padding:32px 36px;overflow-y:auto;}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.ct{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;}
+.dla{display:none;align-items:center;gap:8px;border:1px solid var(--gold);background:none;color:var(--gold);cursor:pointer;padding:8px 20px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;transition:all .2s;}
+.dla:hover{background:var(--gold);color:var(--white);}
+.dla.on{display:flex;}
+
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.tile{background:var(--white);border:1px solid var(--border-soft);overflow:hidden;}
+.th{padding:9px 14px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;}
+.tl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.tsv{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);cursor:pointer;padding:4px 11px;font-family:'Outfit',sans-serif;transition:all .2s;display:none;}
+.tsv.on{display:block;}
+.tsv:hover{border-color:var(--gold);color:var(--gold);}
+.tb{aspect-ratio:1;background:linear-gradient(145deg,#f5efe4,#ede5d6);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.tb img{width:100%;height:100%;object-fit:cover;display:none;}
+.tb img.show{display:block;}
+.tld{display:none;flex-direction:column;align-items:center;gap:12px;position:absolute;}
+.tld.on{display:flex;}
+.gr{width:34px;height:34px;border:2px solid rgba(184,146,74,0.2);border-top-color:var(--gold);border-radius:50%;animation:rot 1s linear infinite;}
+.lt{font-size:11px;color:var(--muted);letter-spacing:0.5px;}
+.te{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.tei{font-size:28px;opacity:.25;}
+.tet{font-size:11px;color:var(--muted);}
+
+@keyframes fu{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:960px){
+  .nav,.snav{padding:14px 20px;}
+  .nav-links{display:none;}
+  .hero{padding:70px 20px 60px;}
+  .strip{grid-template-columns:repeat(2,1fr);}
+  .steps,.vg{grid-template-columns:1fr 1fr;}
+  .how,.showcase{padding:60px 24px;}
+  footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;}
+  .studio-wrap{grid-template-columns:1fr;}
+  .sidebar{border-right:none;border-bottom:1px solid var(--border-soft);}
+  .igrid{grid-template-columns:1fr;}
+  .canvas{padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <nav class="nav">
+    <a class="brand" href="#"><div class="brand-gem"></div><div class="brand-name">Jewel<span>ment</span></div></a>
+    <div class="nav-links">
+      <a class="nav-link" href="#">How it works</a>
+      <a class="nav-link" href="#">Views</a>
+      <a class="nav-link" href="#">jewelment.com</a>
+    </div>
+    <button class="nav-btn" onclick="showStudio()">Open Studio →</button>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="gem-d g1"></div><div class="gem-d g2"></div><div class="gem-d g3"></div><div class="gem-d g4"></div>
+    <div class="hero-tag">AI Jewellery Rendering</div>
+    <h1>From CAD Sketch to<em class="l2">Photorealistic Render</em></h1>
+    <p class="hero-sub">Upload your jewellery CAD design and generate 4 stunning commercial images instantly — Front, Perspective, Side & Lifestyle.</p>
+    <div class="hero-actions">
+      <button class="btn-p" onclick="showStudio()">Start Rendering<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7.5h10M8 3l4.5 4.5L8 12"/></svg></button>
+      <button class="btn-g">See sample renders</button>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="si"><div class="sn">4</div><div class="sl">Render Views</div></div>
+    <div class="si"><div class="sn">2</div><div class="sl">AI Models</div></div>
+    <div class="si"><div class="sn">1:1</div><div class="sl">Square Format</div></div>
+    <div class="si"><div class="sn">18K</div><div class="sl">Gold Quality</div></div>
+  </div>
+
+  <div class="how">
+    <div class="ey">Simple Process</div>
+    <div class="st">How Jewelment Works</div>
+    <div class="steps">
+      <div class="step"><div class="step-n">01</div><h3>Upload CAD</h3><p>Upload your CAD submission sheet or raw sketch. PNG or JPG, up to 10MB.</p></div>
+      <div class="step"><div class="step-n">02</div><h3>Set Specs</h3><p>Choose product type, metal — 18K Yellow, White or Rose Gold — and gemstone type.</p></div>
+      <div class="step"><div class="step-n">03</div><h3>Choose Model</h3><p>Select Gemini 2.0 Flash or Hugging Face FLUX. Both deliver professional results.</p></div>
+      <div class="step"><div class="step-n">04</div><h3>Download Renders</h3><p>4 commercial-grade renders generated instantly. Download all in one click.</p></div>
+    </div>
+  </div>
+
+  <div class="showcase">
+    <div class="ey">Output</div>
+    <div class="st">Four Views, One Click</div>
+    <div class="vg">
+      <div class="vc"><div class="vt">💍</div><div class="vb"><div class="vl">01 — Front View</div><div class="vd">Clean white studio, centred composition</div></div></div>
+      <div class="vc"><div class="vt">💎</div><div class="vb"><div class="vl">02 — Perspective View</div><div class="vd">45° angle, depth and dimension</div></div></div>
+      <div class="vc"><div class="vt">✨</div><div class="vb"><div class="vl">03 — Side Profile</div><div class="vd">90° side view showing band profile</div></div></div>
+      <div class="vc"><div class="vt">👗</div><div class="vb"><div class="vl">04 — Lifestyle Model</div><div class="vd">Worn on hand, editorial background</div></div></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="fb">Jewel<span>ment</span></div>
+    <div class="fc">© 2025 Jewelment · jewelment.com · AI Jewellery Render Studio</div>
+  </footer>
+</div>
+
+<!-- STUDIO -->
+<div id="studio">
+  <div class="snav">
+    <div class="sbrand">Jewel<span>ment</span> — Studio</div>
+    <button class="back-btn" onclick="showLanding()">← Back</button>
+  </div>
+
+  <div class="studio-wrap">
+    <div class="sidebar">
+
+      <!-- Upload -->
+      <div>
+        <div class="sec"><div class="sec-dot"></div>Source Input</div>
+        <div class="uzone" id="uz">
+          <input type="file" id="fi" accept="image/*" onchange="onFile(event)">
+          <div id="uph"><div class="ui">🖼</div><div class="uh"><b>Upload CAD or Photo</b>PNG, JPG — up to 10MB</div></div>
+          <img id="pi" alt="Preview"/>
+        </div>
+      </div>
+
+      <!-- AI Model -->
+      <div>
+        <div class="sec"><div class="sec-dot"></div>AI Model</div>
+        <div class="model-row">
+          <div class="mtab on" id="tab-g" onclick="setModel('g')">
+            <div class="mt-badge">Free</div>
+            <div class="mt-name">Gemini 2.0</div>
+            <div class="mt-sub">Google AI Studio</div>
+          </div>
+          <div class="mtab" id="tab-h" onclick="setModel('h')">
+            <div class="mt-badge dark">Free</div>
+            <div class="mt-name">FLUX</div>
+            <div class="mt-sub">Hugging Face</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Material Specs -->
+      <div>
+        <div class="sec"><div class="sec-dot"></div>Material Specs</div>
+        <div class="fg" style="margin-bottom:13px">
+          <div class="fl">Product Type</div>
+          <select class="fs" id="pt">
+            <option>Ring</option><option>Earrings</option><option>Necklace</option>
+            <option>Pendant</option><option>Bracelet</option><option>Bangle</option><option>Nose Pin</option>
+          </select>
+        </div>
+        <div class="fg" style="margin-bottom:13px">
+          <div class="fl">Metal Type</div>
+          <select class="fs" id="mt">
+            <option>18K Yellow Gold</option><option>18K White Gold</option>
+            <option>18K Rose Gold</option><option>Platinum</option><option>Sterling Silver</option>
+          </select>
+        </div>
+        <div class="fg">
+          <div class="fl">Gemstones</div>
+          <div class="chips">
+            <div class="chip on" onclick="tc(this)">Diamond</div>
+            <div class="chip" onclick="tc(this)">Ruby</div>
+            <div class="chip" onclick="tc(this)">Emerald</div>
+            <div class="chip" onclick="tc(this)">Blue Sapphire</div>
+            <div class="chip" onclick="tc(this)">Pearl</div>
+            <div class="chip" onclick="tc(this)">No Gemstones</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button class="gbtn" id="gb" onclick="generate()">
+          <span class="spin" id="gs"></span>
+          <span id="gt">Generate 4 Renders</span>
+        </button>
+        <div class="err" id="eb"></div>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas">
+      <div class="ch">
+        <div class="ct">Generated Assets</div>
+        <button class="dla" id="dab" onclick="dlAll()">↓ Download All</button>
+      </div>
+      <div class="igrid">
+        <div class="tile"><div class="th"><span class="tl">Front View</span><button class="tsv" id="sv-front" onclick="dl('front')">↓ Save</button></div><div class="tb"><div class="tld" id="ld-front"><div class="gr"></div><div class="lt">Rendering…</div></div><div class="te" id="em-front"><div class="tei">🔲</div><div class="tet">Ready to render</div></div><img id="im-front" alt="Front View"/></div></div>
+        <div class="tile"><div class="th"><span class="tl">Perspective View</span><button class="tsv" id="sv-perspective" onclick="dl('perspective')">↓ Save</button></div><div class="tb"><div class="tld" id="ld-perspective"><div class="gr"></div><div class="lt">Rendering…</div></div><div class="te" id="em-perspective"><div class="tei">🔲</div><div class="tet">Ready to render</div></div><img id="im-perspective" alt="Perspective View"/></div></div>
+        <div class="tile"><div class="th"><span class="tl">Side Profile</span><button class="tsv" id="sv-side" onclick="dl('side')">↓ Save</button></div><div class="tb"><div class="tld" id="ld-side"><div class="gr"></div><div class="lt">Rendering…</div></div><div class="te" id="em-side"><div class="tei">🔲</div><div class="tet">Ready to render</div></div><img id="im-side" alt="Side Profile"/></div></div>
+        <div class="tile"><div class="th"><span class="tl">Lifestyle Model</span><button class="tsv" id="sv-lifestyle" onclick="dl('lifestyle')">↓ Save</button></div><div class="tb"><div class="tld" id="ld-lifestyle"><div class="gr"></div><div class="lt">Rendering…</div></div><div class="te" id="em-lifestyle"><div class="tei">🔲</div><div class="tet">Ready to render</div></div><img id="im-lifestyle" alt="Lifestyle Model"/></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showStudio(){document.getElementById('landing').style.display='none';document.getElementById('studio').classList.add('active');}
+function showLanding(){document.getElementById('studio').classList.remove('active');document.getElementById('landing').style.display='flex';}
+
+let model='g';
+function setModel(m){
+  model=m;
+  document.getElementById('tab-g').classList.toggle('on',m==='g');
+  document.getElementById('tab-h').classList.toggle('on',m==='h');
+}
+
+function tc(el){el.classList.toggle('on');}
+
+let b64=null,mime=null;
+function onFile(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const res=ev.target.result;b64=res.split(',')[1];mime=f.type;
+    const pi=document.getElementById('pi');pi.src=res;pi.style.display='block';
+    document.getElementById('uph').style.display='none';
+    document.getElementById('uz').classList.add('filled');
+  };
+  r.readAsDataURL(f);
+}
+
+function showErr(m){const b=document.getElementById('eb');b.textContent=m;b.classList.add('on');}
+function hideErr(){document.getElementById('eb').classList.remove('on');}
+
+const store={};
+function setLoad(v,on){
+  document.getElementById(`ld-${v}`).classList.toggle('on',on);
+  if(on){document.getElementById(`em-${v}`).style.display='none';document.getElementById(`im-${v}`).classList.remove('show');}
+}
+function showImg(v,url){
+  store[v]=url;
+  const img=document.getElementById(`im-${v}`);img.src=url;img.classList.add('show');
+  document.getElementById(`ld-${v}`).classList.remove('on');
+  document.getElementById(`em-${v}`).style.display='none';
+  document.getElementById(`sv-${v}`).classList.add('on');
+}
+function resetTile(v){
+  store[v]=null;
+  document.getElementById(`im-${v}`).classList.remove('show');
+  document.getElementById(`sv-${v}`).classList.remove('on');
+  document.getElementById(`em-${v}`).style.display='flex';
+  document.getElementById(`em-${v}`).querySelector('.tet').textContent='Ready to render';
+  setLoad(v,false);
+}
+function failTile(v,msg){
+  document.getElementById(`ld-${v}`).classList.remove('on');
+  document.getElementById(`em-${v}`).style.display='flex';
+  document.getElementById(`em-${v}`).querySelector('.tet').textContent=msg||'Failed — retry';
+}
+
+function prompt(view,prod,metal,gems){
+  const g=gems.length?gems.join(', '):'no gemstones';
+  const base=`Hyper-realistic professional jewellery photography of a ${metal} ${prod} set with ${g}. Square 1:1 format. Surface shadow beneath the piece. Subtle surface reflection. Diamonds with exceptional brilliance and fire. Warm polished ${metal} finish. Ultra-sharp commercial quality.`;
+  const map={
+    front:`EXACT FRONT VIEW jewellery render: ${base} Camera facing perfectly straight-on. Pure white seamless studio background. Soft diffused top lighting. Product centred. No hands. No props.`,
+    perspective:`PERSPECTIVE 3-QUARTER VIEW jewellery render: ${base} Camera at 45-degree angle showing front and side simultaneously. Soft gradient grey background. Dramatic studio lighting on gold and diamonds. Full depth and dimension. No hands. No props.`,
+    side:`EXACT SIDE PROFILE VIEW jewellery render: ${base} Camera positioned precisely 90 degrees to the side. Pure white seamless background. Shows band profile, thickness, and stone setting height. No hands. No props.`,
+    lifestyle:`LUXURY LIFESTYLE MODEL SHOT: ${base} The ${prod} worn elegantly on a beautiful manicured hand with nude blush nail polish. Soft warm bokeh background with golden hour interior light. Editorial luxury jewellery advertisement. Aspirational magazine quality.`
+  };
+  return map[view];
+}
+
+async function callGemini(pr){
+  const key=window._GEMINI_KEY||prompt('Enter Gemini API Key:','');
+  window._GEMINI_KEY=key;
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${key}`;
+  const parts=[];
+  if(b64&&mime)parts.push({inline_data:{mime_type:mime,data:b64}});
+  parts.push({text:pr+'\n\nGenerate a photorealistic jewellery image.'});
+  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{parts}],generationConfig:{responseModalities:['IMAGE','TEXT'],temperature:0.7}})});
+  if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`Gemini ${res.status}`);}
+  const d=await res.json();
+  for(const p of(d.candidates?.[0]?.content?.parts||[])){
+    if(p.inlineData?.mimeType?.startsWith('image/'))return`data:${p.inlineData.mimeType};base64,${p.inlineData.data}`;
+  }
+  throw new Error('Gemini did not return an image.');
+}
+
+async function callHF(pr){
+  const tok=window._HF_TOKEN||prompt('Enter Hugging Face Token:','');
+  window._HF_TOKEN=tok;
+  const res=await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${tok}`,'Content-Type':'application/json'},
+    body:JSON.stringify({inputs:pr,parameters:{width:1024,height:1024,num_inference_steps:28,guidance_scale:3.5}})
+  });
+  if(!res.ok){const t=await res.text();throw new Error(`HuggingFace ${res.status}: ${t.slice(0,100)}`);}
+  const blob=await res.blob();
+  return new Promise((ok,fail)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=fail;r.readAsDataURL(blob);});
+}
+
+async function generate(){
+  if(!b64){showErr('Please upload a CAD or product image first.');return;}
+  hideErr();
+  const prod=document.getElementById('pt').value;
+  const metal=document.getElementById('mt').value;
+  const gems=[...document.querySelectorAll('.chip.on')].map(c=>c.textContent);
+  const btn=document.getElementById('gb');
+  btn.disabled=true;
+  document.getElementById('gs').style.display='block';
+  document.getElementById('gt').textContent='Generating…';
+  const views=['front','perspective','side','lifestyle'];
+  views.forEach(v=>{resetTile(v);setLoad(v,true);});
+  document.getElementById('dab').classList.remove('on');
+  let ok=0;
+  await Promise.allSettled(views.map(async v=>{
+    try{
+      const pr=prompt(v,prod,metal,gems);
+      const url=model==='g'?await callGemini(pr):await callHF(pr);
+      showImg(v,url);ok++;
+    }catch(err){failTile(v);console.error(v,err.message);if(ok===0)showErr(err.message);}
+  }));
+  btn.disabled=false;document.getElementById('gs').style.display='none';document.getElementById('gt').textContent='Generate 4 Renders';
+  if(ok>0)document.getElementById('dab').classList.add('on');
+}
+
+function dl(v){const d=store[v];if(!d)return;const a=document.createElement('a');a.href=d;a.download=`Jewelment_${v}.png`;a.click();}
+function dlAll(){Object.entries(store).forEach(([v,d])=>{if(d)setTimeout(()=>dl(v),150);});}
+</script>
+</body>
+</html>
